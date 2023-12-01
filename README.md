@@ -1,0 +1,1 @@
+Trying to learn a bit of F# by doing advent of code. Not looking for good efficiency or performance.
