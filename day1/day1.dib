@@ -1,0 +1,65 @@
+#!meta
+
+{"kernelInfo":{"defaultKernelName":"csharp","items":[{"aliases":[],"name":"csharp"},{"aliases":[],"languageName":"fsharp","name":"fsharp"}]}}
+
+#!markdown
+
+# Part 1
+
+#!fsharp
+
+let getLineNumber (line: string) = 
+    let digits = [| '1'; '2'; '3'; '4'; '5'; '6'; '7'; '8'; '9'|]
+
+    let first = line.IndexOfAny(digits)
+    let last = line.LastIndexOfAny(digits)
+
+    $"{line.[first]}{line.[last]}" |> int
+
+#!markdown
+
+Read the files and sum all the result for each line.
+
+#!fsharp
+
+File.ReadLines "./input"
+|> Seq.map getLineNumber
+|> Seq.sum
+
+#!markdown
+
+# Part 2
+
+Replace the string representations by their digit counterparts before searching.
+
+#!fsharp
+
+let getLineNumber (line: string) = 
+    let substitutionMap = Map.ofList [
+        ("one", "1"); ("two", "2"); ("three", "3");
+        ("four", "4"); ("five", "5"); ("six", "6");
+        ("seven", "7"); ("eight", "8"); ("nine", "9")
+    ]
+
+    let updatedLine = 
+        substitutionMap
+        |> Map.fold (fun (acc: string) key value -> acc.Replace(key, $"{key}{value}{key}")) line
+
+    let digits = [| '1'; '2'; '3'; '4'; '5'; '6'; '7'; '8'; '9'|]
+
+    let first = updatedLine.IndexOfAny(digits)
+    let last = updatedLine.LastIndexOfAny(digits)
+
+    $"{updatedLine.[first]}{updatedLine.[last]}" |> int
+
+#!markdown
+
+We have to do 9 replaces (O(n)) for each line, which might be slower than maybe using a regex depending on the line size.
+
+Also some digits might have common characters inside the string: `twoneight`. Doing the replacement in the order of the Map would give `tw1ght` when we actually want `2n8`. To avoid this, I just surround the replaced digits by its original representation on both sides, so I get `twone1oneight` after the first substitution, and `two2twoone1oneeight8eight` after the last one, giving the same result as `2n8`.
+
+#!fsharp
+
+File.ReadLines "./input"
+|> Seq.map getLineNumber
+|> Seq.sum
