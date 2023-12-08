@@ -118,9 +118,6 @@ let parseLine (str: string) =
         | [|hand; bid|] -> (hand |> parseHand, int bid)
         | _ -> failwith "Error: Unexpected case LineParser"
 
-let tap f x =
-    f x
-    x
 let solution = 
     File.ReadLines "./input"
     |> Seq.map parseLine
